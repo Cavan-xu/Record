@@ -11,6 +11,7 @@
 - snow_flake: 雪花算法
 - xtea: 签名算法
 - fixed_float: 稳定的浮点数
+- timer: 基于时间轮实现的定时器
 
 ## source_code
 开源项目源码阅读
