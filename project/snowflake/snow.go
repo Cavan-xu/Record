@@ -35,8 +35,11 @@ type SnowGenerator struct {
 }
 
 // New SnowGenerator
-func New(node int64) *SnowGenerator {
+func New(node ...int64) *SnowGenerator {
 	once.Do(func() {
+		if len(node) == 0 {
+			panic("initialization SnowGenerator lack param [\"node\"]")
+		}
 		startTime, err := time.ParseInLocation(time.RFC3339, "2022-06-18T20:06:05+08:00", time.Local)
 		if err != nil {
 			panic(err)
@@ -44,7 +47,7 @@ func New(node int64) *SnowGenerator {
 		epoch := startTime.UnixMilli()
 		instance = &SnowGenerator{
 			epoch: epoch,
-			node:  node,
+			node:  node[0],
 			time:  0,
 			step:  0,
 		}
