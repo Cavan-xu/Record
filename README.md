@@ -12,6 +12,7 @@
 - xtea: 签名算法
 - fixed_float: 稳定的浮点数
 - timer: 基于时间轮实现的定时器
+- binary_search: 二分查找变种，使用二分查找计算玩家等级
 
 ## source_code
 开源项目源码阅读
