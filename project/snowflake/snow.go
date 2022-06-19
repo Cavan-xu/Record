@@ -23,7 +23,7 @@ const (
 
 	milliSecond = int64(time.Millisecond)
 
-	timeShift = workerBit + stepBit // 	时间左移位数
+	timeShift = workerBit + stepBit // 时间左移位数
 )
 
 var (
