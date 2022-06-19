@@ -32,6 +32,7 @@ func StrToFixedFloat(str string) FixedFloat {
 	for ; i < len(str); i++ {
 		if i == 0 && str[i] == '-' {
 			sign = -1
+			continue
 		}
 		if str[i] >= '0' && str[i] <= '9' {
 			integerPart = integerPart*10 + int(str[i]-'0')
@@ -161,5 +162,5 @@ func (f FixedFloat) Div(other FixedFloat) FixedFloat {
 }
 
 func (f FixedFloat) Sqrt() FixedFloat {
-
+	return 0
 }
