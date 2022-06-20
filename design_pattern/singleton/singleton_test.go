@@ -11,3 +11,11 @@ func TestSingleton(t *testing.T) {
 		t.Fatal("c1 != c2")
 	}
 }
+
+func TestNew(t *testing.T) {
+	c1 := New()
+	c2 := New()
+	if c1 != c2 {
+		t.Fatal("c1 != c2")
+	}
+}
