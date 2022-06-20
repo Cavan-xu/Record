@@ -61,3 +61,10 @@ func TestFixedFloat_Div(t *testing.T) {
 	t.Logf("4.2 / 2.1 = %f", StrToFixedFloat("4.2").Div(StrToFixedFloat("2.1")).Float64())
 	t.Logf("4.2 / (-2.1) = %f", StrToFixedFloat("4.2").Div(StrToFixedFloat("-2.1")).Float64())
 }
+
+func TestFixedFloat_Sqrt(t *testing.T) {
+	t.Logf("4 sqrt = %d", IntToFixedFloat(4).Sqrt().Int())
+	t.Logf("1 sqrt = %d", IntToFixedFloat(1).Sqrt().Int())
+	t.Logf("0.1 sqrt = %f", StrToFixedFloat("0.1").Sqrt().Float64())
+	t.Logf("2.1 sqrt = %f", StrToFixedFloat("2.1").Sqrt().Float64())
+}
