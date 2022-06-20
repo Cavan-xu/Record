@@ -3,6 +3,7 @@
 ## design_pattern
 常用设计模式
 - singleton: 单例模式
+- factory: 工厂模式
 
 
 ## project
