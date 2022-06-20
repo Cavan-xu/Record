@@ -162,5 +162,33 @@ func (f FixedFloat) Div(other FixedFloat) FixedFloat {
 }
 
 func (f FixedFloat) Sqrt() FixedFloat {
-	return 0
+	if f <= 0 {
+		return IntToFixedFloat(0)
+	}
+
+	var (
+		sum = int64(f << enLargeBit)
+		max = int64(precision)
+		min = int64(f)
+	)
+
+	if max < min {
+		max = int64(f)
+		min = int64(precision)
+	}
+
+	for max >= min {
+		mid := (max + min) >> 1
+		if mid*mid > sum {
+			max = mid - 1
+		} else {
+			min = mid + 1
+		}
+	}
+
+	if max*max <= sum {
+		return FixedFloat(max)
+	} else {
+		return FixedFloat(min)
+	}
 }
