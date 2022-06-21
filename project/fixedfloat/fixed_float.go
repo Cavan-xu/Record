@@ -167,7 +167,7 @@ func (f FixedFloat) Sqrt() FixedFloat {
 	}
 
 	var (
-		sum = int64(f << enLargeBit)
+		sum = int64(f * precision)
 		max = int64(precision)
 		min = int64(f)
 	)
