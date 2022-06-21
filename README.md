@@ -14,6 +14,7 @@
 - fixed_float: 稳定的浮点数
 - timer: 基于时间轮实现的定时器
 - binary_search: 二分查找变种，使用二分查找计算玩家等级
+- double_array_trie: 双数组前缀树，用于敏感字过滤
 
 ## source_code
 开源项目源码阅读
