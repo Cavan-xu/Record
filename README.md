@@ -4,6 +4,7 @@
 常用设计模式
 - singleton: 单例模式
 - factory: 工厂模式
+- builder: 建造者模式
 
 
 ## project
