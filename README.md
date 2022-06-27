@@ -9,7 +9,9 @@
   - factory: 工厂模式
   - builder: 建造者模式
   - prototype: 原型模式
-
+- 结构型模式
+  - decorator: 装饰器模式
+  
 ## project
 
 项目中使用到的算法:
