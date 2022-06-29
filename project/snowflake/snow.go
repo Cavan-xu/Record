@@ -14,6 +14,8 @@ package snowflake
 import (
 	"sync"
 	"time"
+
+	"awesomeProject/project/common"
 )
 
 const (
@@ -51,7 +53,7 @@ type SnowGenerator struct {
 func New(node int64) *SnowGenerator {
 	once.Do(func() {
 		startTime, _ := time.ParseInLocation(time.RFC3339, "2022-06-18T20:06:05+08:00", time.Local)
-		epoch := startTime.UnixNano() / milliSecond
+		epoch := common.GetTimeMillionSeconds(startTime)
 		instance = &SnowGenerator{
 			epoch: epoch,
 			node:  node,
@@ -66,13 +68,13 @@ func (sg *SnowGenerator) GenerateId() ID {
 	sg.mu.Lock()
 	defer sg.mu.Unlock()
 
-	now := time.Now().UnixNano() / milliSecond
+	now := common.GetCurMillionSeconds()
 
 	if sg.time == now { // 在同一个毫秒里面
 		sg.step = (sg.step + 1) & maxStep
 		if sg.step == 0 {
 			for now <= sg.time {
-				now = time.Now().UnixNano() / milliSecond
+				now = common.GetCurMillionSeconds()
 			}
 		}
 	} else {
