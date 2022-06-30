@@ -29,10 +29,9 @@ type TimerMgr struct {
 	milliSecondCursor int32
 	minuteCursor      int32
 	lastUpdateTime    int64
-	onTimer           func() string
 }
 
-func NewTimerMgr(delegate func() string) *TimerMgr {
+func NewTimerMgr() *TimerMgr {
 	once.Do(func() {
 		timerMgr = &TimerMgr{
 			milliSecondLists:  make([]*TimerList, milliSecondPerMinute),
@@ -41,7 +40,6 @@ func NewTimerMgr(delegate func() string) *TimerMgr {
 			milliSecondCursor: 0,
 			minuteCursor:      0,
 			lastUpdateTime:    common.GetCurMillionSeconds(),
-			onTimer:           delegate,
 		}
 		for i := 0; i < milliSecondPerMinute; i++ {
 			timerMgr.milliSecondLists[i] = NewTimerList()
@@ -51,16 +49,17 @@ func NewTimerMgr(delegate func() string) *TimerMgr {
 		}
 	})
 
+	go timerMgr.Work()
 	return timerMgr
 }
 
-func (mgr *TimerMgr) SetTimer(totalCount, interval int32) int64 {
-	node := NewTimerNode(totalCount, interval)
+func (mgr *TimerMgr) SetTimer(totalCount, interval int32, delegate func() string) int64 {
+	node := NewTimerNode(totalCount, interval, delegate)
 
 	mgr.addTimerToMap(node)
 	mgr.addTimerToList(node)
 
-	return node.GetUniqueId()
+	return node.uniqueId
 }
 
 func (mgr *TimerMgr) RemoveTimer(uniqueId int64) {
@@ -96,7 +95,7 @@ func (mgr *TimerMgr) addTimerToMap(node *TimerNode) {
 	mgr.mu.Lock()
 	defer mgr.mu.Unlock()
 
-	mgr.timerMap[node.GetUniqueId()] = node
+	mgr.timerMap[node.uniqueId] = node
 }
 
 func (mgr *TimerMgr) addTimerToList(node *TimerNode) {
@@ -105,13 +104,13 @@ func (mgr *TimerMgr) addTimerToList(node *TimerNode) {
 
 	var lst *TimerList
 	if node.interval < milliSecondPerMinute {
-		pos := (mgr.milliSecondCursor + node.GetInterval()) % milliSecondPerMinute
+		pos := (mgr.milliSecondCursor + node.interval) % milliSecondPerMinute
 		lst = mgr.milliSecondLists[pos]
 	} else if node.interval <= milliSecondPerWeek {
-		minutes := (mgr.milliSecondCursor + node.GetInterval()) / milliSecondPerMinute
-		pos1 := (mgr.milliSecondCursor + node.GetInterval()) % milliSecondPerMinute
+		minutes := (mgr.milliSecondCursor + node.interval) / milliSecondPerMinute
+		pos1 := (mgr.milliSecondCursor + node.interval) % milliSecondPerMinute
 		pos2 := (mgr.minuteCursor + minutes) % minutePerWeek
-		node.SetMilliSecondPos(pos2)
+		node.milliSecondPos = pos2
 		lst = mgr.minuteLists[pos1]
 	} else {
 		mgr.removeFromMap(node)
@@ -125,11 +124,11 @@ func (mgr *TimerMgr) removeFromMap(node *TimerNode) {
 	mgr.mu.Lock()
 	defer mgr.mu.Unlock()
 
-	delete(mgr.timerMap, node.GetUniqueId())
+	delete(mgr.timerMap, node.uniqueId)
 }
 
 func (mgr *TimerMgr) removeFromList(node *TimerNode) {
-	lst := node.GetLst()
+	lst := node.lst
 	if lst != nil {
 		lst.Remove(node)
 	}
@@ -155,6 +154,8 @@ func (mgr *TimerMgr) update() {
 		crossMilliSecond = milliSecondPerMinute - 1
 	}
 
+	mgr.lastUpdateTime += crossMilliSecond
+
 	for i := 0; i < int(crossMilliSecond); i++ {
 		mgr.cursorMutex.Lock()
 		mgr.milliSecondCursor += 1
@@ -162,10 +163,49 @@ func (mgr *TimerMgr) update() {
 			mgr.milliSecondCursor -= milliSecondPerMinute
 			mgr.minuteCursor = (mgr.minuteCursor + 1) % minutePerWeek
 
-			// lst := mgr.minuteLists[mgr.minuteCursor]
-			// lst
+			lst := mgr.minuteLists[mgr.minuteCursor]
+			mgr.minuteToMilliSecondList(lst)
 		}
+		mgr.cursorMutex.Unlock()
 
+		lst := mgr.milliSecondLists[mgr.milliSecondCursor]
+		mgr.timeout(lst)
 	}
 
+}
+
+func (mgr *TimerMgr) minuteToMilliSecondList(lst *TimerList) {
+	lst.Lock()
+	defer lst.Unlock()
+
+	for node := lst.tail.next; node != lst.tail; {
+		next := node.next
+		lst.UnlockRemove(node)
+		mgr.milliSecondLists[node.milliSecondPos].PushBack(node)
+		node = next
+	}
+}
+
+func (mgr *TimerMgr) timeout(lst *TimerList) {
+	lst.Lock()
+	defer lst.Unlock()
+
+	for node := lst.tail.next; node != lst.tail; {
+		next := node.next
+		node.currentCount++
+		mgr.triggerTimer(node)
+		if node.currentCount < node.totalCount {
+			lst.UnlockRemove(node)
+			node.nextTickTime = mgr.lastUpdateTime + int64(node.interval)
+			mgr.addTimerToList(node)
+		} else {
+			lst.UnlockRemove(node)
+			mgr.removeFromMap(node)
+		}
+		node = next
+	}
+}
+
+func (mgr *TimerMgr) triggerTimer(node *TimerNode) {
+	node.onTimer()
 }

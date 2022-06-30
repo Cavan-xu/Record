@@ -15,9 +15,10 @@ type TimerNode struct {
 	prev           *TimerNode
 	next           *TimerNode
 	lst            *TimerList
+	onTimer        func() string
 }
 
-func NewTimerNode(totalCount, interval int32) *TimerNode {
+func NewTimerNode(totalCount, interval int32, delegate func() string) *TimerNode {
 	return &TimerNode{
 		uniqueId:       snowflake.New(1).GenerateId().Int64(),
 		totalCount:     totalCount,
@@ -25,6 +26,7 @@ func NewTimerNode(totalCount, interval int32) *TimerNode {
 		nextTickTime:   common.GetCurMillionSeconds() + int64(interval),
 		milliSecondPos: 0,
 		interval:       interval,
+		onTimer:        delegate,
 	}
 }
 
