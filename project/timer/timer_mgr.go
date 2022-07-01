@@ -110,8 +110,8 @@ func (mgr *TimerMgr) addTimerToList(node *TimerNode) {
 		minutes := (mgr.milliSecondCursor + node.interval) / milliSecondPerMinute
 		pos1 := (mgr.milliSecondCursor + node.interval) % milliSecondPerMinute
 		pos2 := (mgr.minuteCursor + minutes) % minutePerWeek
-		node.milliSecondPos = pos2
-		lst = mgr.minuteLists[pos1]
+		node.milliSecondPos = pos1
+		lst = mgr.minuteLists[pos2]
 	} else {
 		mgr.removeFromMap(node)
 		return
