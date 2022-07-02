@@ -47,9 +47,9 @@ func NewTimerMgr() *TimerMgr {
 		for i := 0; i < minutePerWeek; i++ {
 			timerMgr.minuteLists[i] = NewTimerList()
 		}
+		go timerMgr.Work()
 	})
 
-	go timerMgr.Work()
 	return timerMgr
 }
 
