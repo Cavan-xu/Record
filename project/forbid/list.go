@@ -32,7 +32,17 @@ func (list *List) ExactMatchSearch(val []rune) bool {
 	node := list.GetFirst()
 
 	for node != list.tail {
-		if string(node.value) == string(val) {
+		if len(val) != len(node.value) {
+			return false
+		}
+		matchLength := 0
+		for i:= 0; i < len(val); i++ {
+			if val[i] != node.value[i] {
+				break
+			}
+			matchLength++
+		}
+		if matchLength == len(val) {
 			return true
 		}
 		node = node.next
@@ -51,10 +61,18 @@ func (list *List) CommonPrefixSearch(val []rune) int {
 			node = node.next
 			continue
 		}
-		if string(val[:commonLength]) == string(node.value) && commonLength > maxMatch {
+		for i := 0; i < commonLength; i++ {
+			if val[i] != node.value[i] {
+				goto A
+			}
+		}
+		if commonLength > maxMatch {
 			maxMatch = commonLength
 		}
-		node = node.next
+
+		A:{
+			node = node.next
+		}
 	}
 
 	return maxMatch

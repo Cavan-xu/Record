@@ -144,7 +144,7 @@ func TestForbidden_CommonPrefixSearch(t *testing.T) {
 			if ok != tt.want {
 				t.Errorf("CommonPrefixSearch() got = %v, want %v", ok, tt.want)
 			}
-			t.Log(str)
+			t.Logf("[ %s ] get [ %s ]", tt.args.str, str)
 		})
 	}
 }
