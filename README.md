@@ -12,9 +12,9 @@
 - 结构型模式
   - decorator: 装饰器模式
   
-## project
+## practical_skills
 
-项目中使用到的算法:
+使用过的实用技能:
 
 - snow_flake: 雪花算法
 - xtea: 签名算法

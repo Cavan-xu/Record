@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"awesomeProject/project/common"
+	"awesomeProject/practical_skills/common"
 )
 
 const (

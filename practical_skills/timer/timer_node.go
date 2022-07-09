@@ -1,8 +1,8 @@
 package timingwhell
 
 import (
-	"awesomeProject/project/common"
-	"awesomeProject/project/snowflake"
+	"awesomeProject/practical_skills/common"
+	"awesomeProject/practical_skills/snowflake"
 )
 
 type TimerNode struct {
