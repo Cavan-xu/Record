@@ -36,7 +36,7 @@ func (list *List) ExactMatchSearch(val []rune) bool {
 			return false
 		}
 		matchLength := 0
-		for i:= 0; i < len(val); i++ {
+		for i := 0; i < len(val); i++ {
 			if val[i] != node.value[i] {
 				break
 			}
@@ -70,9 +70,11 @@ func (list *List) CommonPrefixSearch(val []rune) int {
 			maxMatch = commonLength
 		}
 
-		A:{
-			node = node.next
+	A:
+		{
 		}
+
+		node = node.next
 	}
 
 	return maxMatch
