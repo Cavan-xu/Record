@@ -1,37 +1,47 @@
 package xtea
 
 import (
-	"encoding/binary"
-	"errors"
 	"math/rand"
+	"sync"
 	"unsafe"
+
+	"awesomeProject/practical_skills/common"
 )
 
 var (
-	calcCount int32 = 32
-	cipher    [4]uint32
+	once sync.Once
+	xTea *XTea
 
 	key = []byte{'c', 'a', 'v', 'a', 'n', '.', 'x', 'u', '@', 'g', 'i', 't', 'h', 'u', 'b', '.', 'c', 'o', 'm'}
 )
 
-func DecodeUint32(buff []byte, pos int) (uint32, int, error) {
-	if pos+4 > len(buff) {
-		return 0, pos, errors.New("decode buff is not enough")
-	}
-
-	res := binary.BigEndian.Uint32(buff[pos:])
-	return res, pos + 4, nil
+type XTea struct {
+	cipher    [4]uint32
+	calcCount int32
 }
 
-func init() {
-	pos := 0
-	cipher[0], pos, _ = DecodeUint32(key, pos)
-	cipher[1], pos, _ = DecodeUint32(key, pos)
-	cipher[2], pos, _ = DecodeUint32(key, pos)
-	cipher[3], pos, _ = DecodeUint32(key, pos)
+func NewXTea(calcCount int32) *XTea {
+	once.Do(func() {
+		var (
+			pos    = 0
+			cipher [4]uint32
+		)
+
+		cipher[0], pos, _ = common.DecodeUint32(key, pos)
+		cipher[1], pos, _ = common.DecodeUint32(key, pos)
+		cipher[2], pos, _ = common.DecodeUint32(key, pos)
+		cipher[3], pos, _ = common.DecodeUint32(key, pos)
+
+		xTea = &XTea{
+			cipher:    cipher,
+			calcCount: calcCount,
+		}
+	})
+
+	return xTea
 }
 
-func xTea(v [8]byte, k [4]uint32, n int32) (o [8]byte) {
+func (t XTea) xTea(v [8]byte, n int32) (o [8]byte) {
 	y := *(*uint32)(unsafe.Pointer(&v))
 	z := *(*uint32)(unsafe.Pointer(&v[4]))
 	delta := uint32(0x9e3779b9)
@@ -39,16 +49,16 @@ func xTea(v [8]byte, k [4]uint32, n int32) (o [8]byte) {
 		limit := delta * uint32(n)
 		sum := uint32(0)
 		for limit != sum {
-			y += (z<<4 ^ z>>5) + z ^ sum + k[sum&3]
+			y += (z<<4 ^ z>>5) + z ^ sum + t.cipher[sum&3]
 			sum += delta
-			z += (y<<4 ^ y>>5) + y ^ sum + k[sum>>11&3]
+			z += (y<<4 ^ y>>5) + y ^ sum + t.cipher[sum>>11&3]
 		}
 	} else {
 		sum := delta * uint32(-n)
 		for sum != 0 {
-			z -= (y<<4 ^ y>>5) + y ^ sum + k[sum>>11&3]
+			z -= (y<<4 ^ y>>5) + y ^ sum + t.cipher[sum>>11&3]
 			sum -= delta
-			y -= (z<<4 ^ z>>5) + z ^ sum + k[sum&3]
+			y -= (z<<4 ^ z>>5) + z ^ sum + t.cipher[sum&3]
 		}
 	}
 
@@ -57,7 +67,7 @@ func xTea(v [8]byte, k [4]uint32, n int32) (o [8]byte) {
 	return
 }
 
-func encrypt(in []byte, k [4]uint32) []byte {
+func (t *XTea) Encrypt(in []byte) []byte {
 	var (
 		x [8]byte
 		y [8]byte
@@ -75,7 +85,7 @@ func encrypt(in []byte, k [4]uint32) []byte {
 
 	for i := 0; i+8 <= len(buff); i += 8 {
 		copy(z[:], buff[i:i+8])
-		o := xTea(z, k, calcCount)
+		o := t.xTea(z, t.calcCount)
 		if i >= 8 {
 			for j := 0; j < 8; j++ {
 				o[j] = o[j] ^ res[i-8+j]
@@ -87,7 +97,7 @@ func encrypt(in []byte, k [4]uint32) []byte {
 	return res
 }
 
-func decrypt(in []byte, k [4]uint32) []byte {
+func (t *XTea) Decrypt(in []byte) []byte {
 	var z [8]byte
 	res := make([]byte, 0)
 	for i := 0; i+8 <= len(in); i += 8 {
@@ -97,7 +107,7 @@ func decrypt(in []byte, k [4]uint32) []byte {
 				z[j] = z[j] ^ in[i-8+j]
 			}
 		}
-		o := xTea(z, k, -calcCount)
+		o := t.xTea(z, -t.calcCount)
 		res = append(res, o[:]...)
 	}
 
