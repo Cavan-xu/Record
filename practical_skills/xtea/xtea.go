@@ -1,5 +1,9 @@
 package xtea
 
+/*
+	xTea: tea 算法优化版本，一种高效的加密解密算法
+*/
+
 import (
 	"math/rand"
 	"sync"
