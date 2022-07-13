@@ -14,6 +14,7 @@ import (
 
 const (
 	defaultExpireTime = 24 * 60 * 60 // 默认过期时间为一天
+	defaultCalcCount  = 32           // xTea 计算次数
 )
 
 type Signature struct {
@@ -36,8 +37,7 @@ func (s *Signature) Encrypt() string {
 	buff = append(buff, common.EncodeString(s.UserName)...)
 	buff = append(buff, common.EncodeInt64(s.ExpireTime)...)
 
-	bytes := xtea.NewXTea(32).Encrypt(buff)
-
+	bytes := xtea.NewXTea(defaultCalcCount).Encrypt(buff)
 	return base64.StdEncoding.EncodeToString(bytes)
 }
 
@@ -49,7 +49,7 @@ func (s *Signature) Decrypt(str string) error {
 
 	var pos int
 
-	bytes = xtea.NewXTea(32).Decrypt(bytes)
+	bytes = xtea.NewXTea(defaultCalcCount).Decrypt(bytes)
 	s.UserId, pos, err = common.DecodeInt32(bytes, pos)
 	if err != nil {
 		return err
