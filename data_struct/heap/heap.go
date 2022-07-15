@@ -42,10 +42,22 @@ func (h *Heap) DeleteTop() int32 {
 	copy(newArr, h.Arr)
 	newArr[0] = h.Arr[len(h.Arr)-1]
 
-	h.downAdjust(newArr, 0, len(newArr))
+	h.downAdjust(newArr, 0)
 	h.Arr = newArr
 
 	return res
+}
+
+func (h *Heap) Add(val int32) {
+	if len(h.Arr) == 0 {
+		h.Arr = append(h.Arr, val)
+	}
+
+	newArr := make([]int32, len(h.Arr)+1)
+	copy(newArr, h.Arr)
+
+	h.upAdjust(newArr)
+	h.Arr = newArr
 }
 
 // 默认小顶堆
@@ -55,19 +67,19 @@ func (h *Heap) build(arr []int32) {
 	}
 
 	for i := len(arr)/2 - 1; i >= 0; i-- {
-		h.downAdjust(arr, i, len(arr))
+		h.downAdjust(arr, i)
 	}
 
 	h.Arr = arr
 }
 
 // 向下调整
-func (h *Heap) downAdjust(arr []int32, parentIndex int, length int) {
+func (h *Heap) downAdjust(arr []int32, parentIndex int) {
 	temp := arr[parentIndex]
 	childIndex := parentIndex*2 + 1
 
-	for childIndex < length {
-		if childIndex+1 < length && arr[childIndex+1] < arr[childIndex] {
+	for childIndex < len(arr) {
+		if childIndex+1 < len(arr) && arr[childIndex+1] < arr[childIndex] {
 			childIndex += 1
 		}
 		if temp < arr[childIndex] {
@@ -79,4 +91,18 @@ func (h *Heap) downAdjust(arr []int32, parentIndex int, length int) {
 	}
 
 	arr[parentIndex] = temp
+}
+
+func (h *Heap) upAdjust(arr []int32) {
+	child := len(arr) - 1
+	parent := (child - 1) / 2
+	tmp := arr[child]
+
+	for child > 0 && tmp < arr[parent] {
+		arr[child] = arr[parent]
+		child = parent
+		parent = (child - 1) / 2
+	}
+
+	arr[child] = tmp
 }
