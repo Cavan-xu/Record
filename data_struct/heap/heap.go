@@ -42,7 +42,7 @@ func (h *Heap) DeleteTop() int32 {
 	copy(newArr, h.Arr)
 	newArr[0] = h.Arr[len(h.Arr)-1]
 
-	h.downAdjust(newArr, 0)
+	h.downAdjust(newArr, 0, len(newArr))
 	h.Arr = newArr
 
 	return res
@@ -67,19 +67,19 @@ func (h *Heap) build(arr []int32) {
 	}
 
 	for i := len(arr)/2 - 1; i >= 0; i-- {
-		h.downAdjust(arr, i)
+		h.downAdjust(arr, i, len(arr))
 	}
 
 	h.Arr = arr
 }
 
 // 向下调整
-func (h *Heap) downAdjust(arr []int32, parentIndex int) {
+func (h *Heap) downAdjust(arr []int32, parentIndex int, length int) {
 	temp := arr[parentIndex]
 	childIndex := parentIndex*2 + 1
 
-	for childIndex < len(arr) {
-		if childIndex+1 < len(arr) && arr[childIndex+1] < arr[childIndex] {
+	for childIndex < length {
+		if childIndex+1 < length && arr[childIndex+1] < arr[childIndex] {
 			childIndex += 1
 		}
 		if temp < arr[childIndex] {
