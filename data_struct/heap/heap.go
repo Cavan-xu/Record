@@ -25,6 +25,29 @@ func NewHeap(arr []int32) *Heap {
 	return heap
 }
 
+// 删除顶部元素
+func (h *Heap) DeleteTop() int32 {
+	if len(h.Arr) == 0 {
+		return -1
+	}
+
+	res := h.Arr[0]
+
+	if len(h.Arr) == 1 {
+		h.Arr = []int32{}
+		return res
+	}
+
+	newArr := make([]int32, len(h.Arr)-1)
+	copy(newArr, h.Arr)
+	newArr[0] = h.Arr[len(h.Arr)-1]
+
+	h.downAdjust(newArr, 0, len(newArr))
+	h.Arr = newArr
+
+	return res
+}
+
 // 默认小顶堆
 func (h *Heap) build(arr []int32) {
 	if len(arr) == 0 {
