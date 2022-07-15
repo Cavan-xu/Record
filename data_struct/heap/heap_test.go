@@ -24,3 +24,13 @@ func TestHeap_DeleteTop(t *testing.T) {
 	assert.Equal(t, int32(1), res)
 	assert.Equal(t, want, heap.Arr)
 }
+
+func TestHeap_Add(t *testing.T) {
+	arr := []int32{6, 3, 8, 2, 4, 7, 9, 1}
+	want := []int32{0, 1, 7, 2, 4, 8, 9, 6, 3}
+
+	heap := NewHeap(arr)
+	heap.Add(0)
+
+	assert.Equal(t, want, heap.Arr)
+}
