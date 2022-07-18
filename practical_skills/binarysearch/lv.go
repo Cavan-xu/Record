@@ -12,6 +12,7 @@ package binarysearch
 
 // 0~50 为等级1，51～100 为等级二
 var ExpSlice = []int{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000}
+
 // 同样 0~49 为等级一， 50~99 为等级二，注意，下标0只占位
 var ExpSliceV2 = []int{-1, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000}
 
@@ -54,32 +55,19 @@ func UseBinarySearch(exp int) int {
 func UseBinarySearchV2(exp int) int {
 	min := 1
 	max := len(ExpSliceV2) - 1
-	maxLv := len(ExpSliceV2) - 1
 
-	for min < max {
-		if min == max-1 {
-			break
-		}
+	for min < max-1 {
 		mid := (min + max) >> 1
-		if ExpSliceV2[mid] >= exp {
-			max = mid
-		} else {
+		if exp >= ExpSliceV2[mid] {
 			min = mid
+		} else {
+			max = mid
 		}
 	}
 
-	var lv int
-	if ExpSliceV2[max] <= exp {
-		lv = max + 1
-	} else if ExpSliceV2[min] <= exp {
-		lv = max
+	if ExpSliceV2[min] <= exp {
+		return min + 1
 	} else {
-		lv = min
+		return min
 	}
-
-	if lv > maxLv {
-		return maxLv
-	}
-
-	return lv
 }
