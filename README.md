@@ -5,7 +5,7 @@
 常见数据结构
 
 - heap: 二叉堆
-- b_plus_tree: B+树
+- bplustree: B+树
 - list: 链表
 - skiplist: 跳跃表
 

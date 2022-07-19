@@ -18,7 +18,7 @@ func LocalSort(arr []int32) []int32 {
 	copy(newArr, heap.Arr)
 
 	for i := 0; i < len(newArr); i++ {
-		// 首位交换
+		// 收尾交换
 		val := newArr[0]
 		newArr[0] = newArr[len(newArr)-i-1]
 		newArr[len(newArr)-i-1] = val
