@@ -84,8 +84,26 @@ func (s *SkipList) Search(val int32) *Node {
 	return nil
 }
 
-func (s *SkipList) Delete(val int32) {
+func (s *SkipList) Delete(val int32) bool {
+	removeNode := s.findNode(val)
+	if removeNode == nil {
+		return false
+	}
 
+	curLevel := 0
+	for removeNode != nil {
+		removeNode.left.right = removeNode.right
+		removeNode.right.left = removeNode.left
+		// 如果不是最底层，且该层只有待删除节点一个节点，删除该层
+		if curLevel != 0 && removeNode.left.val == math.MaxInt32 {
+			s.removeLevel()
+		} else {
+			curLevel++
+		}
+		removeNode = removeNode.up
+	}
+
+	return true
 }
 
 // 找到值对应的前置节点
