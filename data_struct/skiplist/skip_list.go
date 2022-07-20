@@ -76,6 +76,11 @@ func (s *SkipList) Add(val int32) {
 }
 
 func (s *SkipList) Search(val int32) *Node {
+	node := s.findNode(val)
+	if node.val == val {
+		return node
+	}
+
 	return nil
 }
 
