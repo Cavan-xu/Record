@@ -1,6 +1,7 @@
 package skiplist
 
 import (
+	"fmt"
 	"math"
 
 	"awesomeProject/practical_skills/common"
@@ -72,7 +73,6 @@ func (s *SkipList) Add(val int32) {
 		node = upperNode
 		curLevel++
 	}
-
 }
 
 func (s *SkipList) Search(val int32) *Node {
@@ -86,7 +86,7 @@ func (s *SkipList) Search(val int32) *Node {
 
 func (s *SkipList) Delete(val int32) bool {
 	removeNode := s.findNode(val)
-	if removeNode == nil {
+	if removeNode.val != val {
 		return false
 	}
 
@@ -95,8 +95,8 @@ func (s *SkipList) Delete(val int32) bool {
 		removeNode.left.right = removeNode.right
 		removeNode.right.left = removeNode.left
 		// 如果不是最底层，且该层只有待删除节点一个节点，删除该层
-		if curLevel != 0 && removeNode.left.val == math.MaxInt32 {
-			s.removeLevel()
+		if curLevel != 0 && removeNode.left.val == math.MaxInt32 && removeNode.right.val == math.MaxInt32 {
+			s.removeLevel(removeNode.left)
 		} else {
 			curLevel++
 		}
@@ -106,12 +106,26 @@ func (s *SkipList) Delete(val int32) bool {
 	return true
 }
 
+func (s *SkipList) LevelPrint() {
+	node := s.tail
+
+	for node != nil {
+		right := node.right
+		for right.val != math.MaxInt32 {
+			fmt.Print(fmt.Sprintf("%d ", right.val))
+			right = right.right
+		}
+		fmt.Println()
+		node = node.down
+	}
+}
+
 // 找到值对应的前置节点
 func (s *SkipList) findNode(val int32) *Node {
 	node := s.tail
 
 	for {
-		for node.right != s.tail && node.right.val <= val {
+		for node.right.val != math.MaxInt32 && node.right.val <= val {
 			node = node.right
 		}
 		if node.down == nil {
@@ -142,11 +156,18 @@ func (s *SkipList) addLevel() {
 	tail.left = tail
 	tail.right = tail
 	tail.down = s.tail
-	s.tail.up = tail
 
+	s.tail.up = tail
 	s.tail = tail
 }
 
-func (s *SkipList) removeLevel() {
+func (s *SkipList) removeLevel(node *Node) {
+	if node.up == nil { // 最上层
+		node.down.up = nil
+	} else {
+		node.up.down = node.down
+		node.down.up = node.up
+	}
 
+	s.maxLevel--
 }
