@@ -9,7 +9,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"awesomeProject/practical_skills/common"
+	"awesomeProject/common"
 )
 
 var (

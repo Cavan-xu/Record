@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"awesomeProject/practical_skills/common"
+	"awesomeProject/common"
 )
 
 const (

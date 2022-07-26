@@ -4,7 +4,8 @@
 
 常见数据结构
 
-- balancetree: 平衡二叉树树
+- balancetree: 平衡二叉树
+- binarytree: 二叉树
 - bplustree: B+树
 - heap: 二叉堆
 - list: 链表

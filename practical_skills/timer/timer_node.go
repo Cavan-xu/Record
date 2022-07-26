@@ -1,7 +1,7 @@
 package timingwhell
 
 import (
-	"awesomeProject/practical_skills/common"
+	"awesomeProject/common"
 	"awesomeProject/practical_skills/snowflake"
 )
 

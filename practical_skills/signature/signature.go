@@ -8,7 +8,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"awesomeProject/practical_skills/common"
+	"awesomeProject/common"
 	"awesomeProject/practical_skills/xtea"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"awesomeProject/practical_skills/common"
+	"awesomeProject/common"
 )
 
 /*
