@@ -70,6 +70,21 @@ func (t *Tree) InOrder(node *Node) {
 	t.InOrder(node.right)
 }
 
-func (t *Tree) InOrderV2() {
+func (t *Tree) InOrderV2() []int {
+	node := t.root
+	res := make([]int, 0, t.count)
+	stack := make([]*Node, 0, t.count)
 
+	for len(stack) > 0 || node != nil {
+		for node != nil {
+			stack = append(stack, node)
+			node = node.left
+		}
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.val)
+		node = node.right
+	}
+
+	return res
 }

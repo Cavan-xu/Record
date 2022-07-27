@@ -14,12 +14,13 @@ func TestNewTree(t *testing.T) {
 	assert.NotNil(t, tree)
 }
 
-func TestTree_InOrder(t1 *testing.T) {
+func TestTree_InOrder(t *testing.T) {
 	inOder := []int{1, 5, 6, 8, 9, 11, 12, 13}
 	preOrder := []int{8, 5, 1, 6, 9, 12, 11, 13}
 
 	tree := NewTree(inOder, preOrder)
 	tree.InOrder(tree.root)
 
-	tree.InOrderV2()
+	res := tree.InOrderV2()
+	t.Log(res)
 }
