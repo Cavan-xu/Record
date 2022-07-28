@@ -24,3 +24,19 @@ func TestTree_InOrder(t *testing.T) {
 	res := tree.InOrderV2()
 	t.Log(res)
 }
+
+func TestTree_PreOrder(t1 *testing.T) {
+	inOder := []int{1, 5, 6, 8, 9, 11, 12, 13}
+	preOrder := []int{8, 5, 1, 6, 9, 12, 11, 13}
+
+	tree := NewTree(inOder, preOrder)
+	tree.PreOrder(tree.root)
+}
+
+func TestTree_AfterOrder(t1 *testing.T) {
+	inOder := []int{1, 5, 6, 8, 9, 11, 12, 13}
+	preOrder := []int{8, 5, 1, 6, 9, 12, 11, 13}
+
+	tree := NewTree(inOder, preOrder)
+	tree.AfterOrder(tree.root)
+}

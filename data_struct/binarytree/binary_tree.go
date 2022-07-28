@@ -59,6 +59,16 @@ func generateNode(inOrder, preOrder []int) *Node {
 	return node
 }
 
+func (t *Tree) PreOrder(node *Node) {
+	if node == nil {
+		return
+	}
+
+	fmt.Println(node.val)
+	t.PreOrder(node.left)
+	t.PreOrder(node.right)
+}
+
 // 使用递归打印中序遍历
 func (t *Tree) InOrder(node *Node) {
 	if node == nil {
@@ -68,6 +78,16 @@ func (t *Tree) InOrder(node *Node) {
 	t.InOrder(node.left)
 	fmt.Println(node.val)
 	t.InOrder(node.right)
+}
+
+func (t *Tree) AfterOrder(node *Node) {
+	if node == nil {
+		return
+	}
+
+	t.AfterOrder(node.left)
+	t.AfterOrder(node.right)
+	fmt.Println(node.val)
 }
 
 func (t *Tree) InOrderV2() []int {
