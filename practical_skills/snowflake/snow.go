@@ -23,8 +23,6 @@ const (
 	stepBit   uint8 = 12 // 计数位数
 	maxStep   int64 = -1 ^ (-1 << stepBit)
 
-	milliSecond = int64(time.Millisecond)
-
 	timeShift = workerBit + stepBit // 时间左移位数
 )
 
@@ -83,5 +81,5 @@ func (sg *SnowGenerator) GenerateId() ID {
 
 	sg.time = now
 
-	return ID((now-sg.epoch)<<timeShift | sg.node<<workerBit | sg.step<<stepBit)
+	return ID((now-sg.epoch)<<timeShift | sg.node<<workerBit | sg.step)
 }
