@@ -19,10 +19,9 @@ func TestTree_InOrder(t *testing.T) {
 	preOrder := []int{8, 5, 1, 6, 9, 12, 11, 13}
 
 	tree := NewTree(inOder, preOrder)
-	tree.InOrder(tree.root)
-
-	res := tree.InOrderV2()
-	t.Log(res)
+	res1 := tree.InOrder(tree.root, []int{})
+	res2 := tree.InOrderV2()
+	assert.Equal(t, res1, res2)
 }
 
 func TestTree_PreOrder(t1 *testing.T) {
@@ -30,7 +29,9 @@ func TestTree_PreOrder(t1 *testing.T) {
 	preOrder := []int{8, 5, 1, 6, 9, 12, 11, 13}
 
 	tree := NewTree(inOder, preOrder)
-	tree.PreOrder(tree.root)
+	res1 := tree.PreOrder(tree.root, []int{})
+	res2 := tree.PreOrderV2()
+	assert.Equal(t1, res1, res2)
 }
 
 func TestTree_AfterOrder(t1 *testing.T) {
@@ -38,5 +39,7 @@ func TestTree_AfterOrder(t1 *testing.T) {
 	preOrder := []int{8, 5, 1, 6, 9, 12, 11, 13}
 
 	tree := NewTree(inOder, preOrder)
-	tree.AfterOrder(tree.root)
+	res1 := tree.AfterOrder(tree.root, []int{})
+	res2 := tree.AfterOrderV2()
+	assert.Equal(t1, res1, res2)
 }
