@@ -1,8 +1,6 @@
 package binarytree
 
 import (
-	"fmt"
-
 	"awesomeProject/common"
 )
 
@@ -59,35 +57,58 @@ func generateNode(inOrder, preOrder []int) *Node {
 	return node
 }
 
-func (t *Tree) PreOrder(node *Node) {
+func (t *Tree) PreOrder(node *Node, res []int) []int {
 	if node == nil {
-		return
+		return res
 	}
 
-	fmt.Println(node.val)
-	t.PreOrder(node.left)
-	t.PreOrder(node.right)
+	res = append(res, node.val)
+	res = t.PreOrder(node.left, res)
+	res = t.PreOrder(node.right, res)
+	return res
 }
 
 // 使用递归打印中序遍历
-func (t *Tree) InOrder(node *Node) {
+func (t *Tree) InOrder(node *Node, res []int) []int {
 	if node == nil {
-		return
+		return res
 	}
 
-	t.InOrder(node.left)
-	fmt.Println(node.val)
-	t.InOrder(node.right)
+	res = t.InOrder(node.left, res)
+	res = append(res, node.val)
+	res = t.InOrder(node.right, res)
+	return res
 }
 
-func (t *Tree) AfterOrder(node *Node) {
+func (t *Tree) AfterOrder(node *Node, res []int) []int {
 	if node == nil {
-		return
+		return res
 	}
 
-	t.AfterOrder(node.left)
-	t.AfterOrder(node.right)
-	fmt.Println(node.val)
+	res = t.AfterOrder(node.left, res)
+	res = t.AfterOrder(node.right, res)
+	res = append(res, node.val)
+	return res
+}
+
+func (t *Tree) PreOrderV2() []int {
+	res := make([]int, 0, t.count)
+	stack := make([]*Node, 0, t.count)
+	stack = append(stack, t.root)
+
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.val)
+		if node.right != nil {
+			stack = append(stack, node.right)
+		}
+		if node.left != nil {
+			stack = append(stack, node.left)
+		}
+	}
+
+	return res
 }
 
 func (t *Tree) InOrderV2() []int {
@@ -104,6 +125,32 @@ func (t *Tree) InOrderV2() []int {
 		stack = stack[:len(stack)-1]
 		res = append(res, node.val)
 		node = node.right
+	}
+
+	return res
+}
+
+func (t *Tree) AfterOrderV2() []int {
+	var prev *Node
+	node := t.root
+	res := make([]int, 0, t.count)
+	stack := make([]*Node, 0, t.count)
+
+	for len(stack) > 0 || node != nil {
+		for node != nil {
+			stack = append(stack, node)
+			node = node.left
+		}
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if node.right == nil || node.right == prev {
+			res = append(res, node.val)
+			prev = node
+			node = nil
+		} else {
+			stack = append(stack, node)
+			node = node.right
+		}
 	}
 
 	return res
